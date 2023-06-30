@@ -1,0 +1,103 @@
+package com.mycompany.codetank;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Scanner;
+
+public class CodeTank {
+
+    /* Faça um programa que receba 5 salários brutos de funcionários, sabendo-se que são descontados Imposto de Renda e INSS, calcule e mostre o total do salário líquido no referido mês.
+
+        Obs.: Salário Bruto - Descontos = Salário Líquido.
+
+        A saída do programa deve fornecer as seguintes informações:
+
+        Salário bruto.
+        Quanto pagou ao INSS.
+        Quanto pagou de Imposto de Renda.
+        Salário líquido.
+        Calcule os descontos e o salário líquido com base nas tabelas abaixo:
+
+        Salário	% Desconto INSS
+        até 1.212,00	7,5%
+        de 1212,01 até 2.427,35	9%
+        de 2.427,36 até 3.641,03	12%
+        de 3.641,04 até 7.087,22	14%
+        Salário	% Desconto Imposto de Renda
+        até 1.903,98	0%
+        de 1.903,99 até 2.826,65	7,5%
+        de 2.826,66 até 3.751,05	15%
+        de 3.751,06 até 4.664,68	22,50%
+        Acima de 4.664,68	27,50%
+    
+    */
+    
+    public static BigDecimal[] calculaInss(BigDecimal[] salarios) {
+        BigDecimal[] inssArray = new BigDecimal[5];;
+
+        for (int i = 0; i < salarios.length; i++) {
+            BigDecimal salario = salarios[i];
+
+            if (salario.compareTo(new BigDecimal("1212")) <= 0) {
+                inssArray[i] = salario.multiply(new BigDecimal("0.075"));
+            } else if (salario.compareTo(new BigDecimal("1212")) > 0 && salario.compareTo(new BigDecimal("2427.35")) <= 0) {
+                inssArray[i] = salario.multiply(new BigDecimal("0.09"));
+            } else if (salario.compareTo(new BigDecimal("2427.36")) > 0 && salario.compareTo(new BigDecimal("3641.03")) <= 0) {
+                inssArray[i] = salario.multiply(new BigDecimal("0.12"));
+            } else {
+                inssArray[i] = salario.multiply(new BigDecimal("0.14"));
+            }
+        }
+
+        return inssArray;
+    }
+
+    public static BigDecimal[] calculaIrpf(BigDecimal[] salarios) {
+        BigDecimal[] irpfArray = new BigDecimal[5];
+
+        for (int i = 0; i < salarios.length; i++) {
+            BigDecimal salario = salarios[i];
+
+            if (salario.compareTo(new BigDecimal("1903.98")) <= 0) {
+                irpfArray[i] = salario;
+            } else if (salario.compareTo(new BigDecimal("1903.98")) > 0 && salario.compareTo(new BigDecimal("2826.65")) <= 0) {
+                irpfArray[i] = salario.multiply(new BigDecimal("0.075"));
+            } else if (salario.compareTo(new BigDecimal("2826.66")) > 0 && salario.compareTo(new BigDecimal("3751.05")) <= 0) {
+                irpfArray[i] = salario.multiply(new BigDecimal("0.15"));
+            } else if (salario.compareTo(new BigDecimal("3751.06")) > 0 && salario.compareTo(new BigDecimal("4664.68")) <= 0) {
+                irpfArray[i] = salario.multiply(new BigDecimal("0.225"));
+            } else {
+                irpfArray[i] = salario.multiply(new BigDecimal("0.275"));
+            }
+        }
+
+        return irpfArray;
+    }
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        BigDecimal[] salarioArray = new BigDecimal[5];
+
+        for (int i = 0; i < 5; i++) {
+            System.out.println("Digite o valor bruto do seu " + (i + 1) + "° salario");
+            BigDecimal salario = sc.nextBigDecimal();
+            salarioArray[i] = salario;
+        }
+
+        BigDecimal[] inssArray = calculaInss(salarioArray);
+        BigDecimal[] irpfArray = calculaIrpf(salarioArray);
+
+        BigDecimal[] salarioLiquido = new BigDecimal[5];
+
+        for (int i = 0; i < 5; i++) {
+            salarioLiquido[i] = salarioArray[i].subtract(inssArray[i]).subtract(irpfArray[i]);
+        }
+
+        for (int i = 0; i < 5; i++) {
+            System.out.println( (i + 1) +"° | Salario Bruto: R$" + salarioArray[i] + " | Desconto INSS: R$" + inssArray[i].setScale(2, RoundingMode.HALF_EVEN) + " | Desconto IRPF: R$" + irpfArray[i].setScale(2, RoundingMode.HALF_EVEN) + " | Salário Líquido: R$" + salarioLiquido[i].setScale(2, RoundingMode.HALF_EVEN));
+        }
+
+    }
+}
